@@ -1,0 +1,8 @@
+#!/bin/sh
+# make sure pg is ready to accept connections
+until docker exec -it database pg_isready -h localhost -p 5432 -U postgres
+do
+  echo "Waiting for postgres"
+  sleep 2;
+done
+# Now able to connect to postgres
