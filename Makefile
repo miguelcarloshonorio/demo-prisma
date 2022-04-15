@@ -1,6 +1,3 @@
-# Load environment variables
-include .env
-
 # Export environment variables to commands
 export
 
@@ -11,6 +8,10 @@ help: ## Show help
 
 # Variables
 TARGET?=develop
+
+init: postgres-up
+	./bin/wait-for-it
+	@ npx prisma migrate dev
 
 dev: postgres-up ## Run the project
 	./bin/wait-for-it
@@ -25,12 +26,6 @@ tests: ## Run project tests
 	./bin/wait-for-it
 	make unit-tests
 	make postgres-down
-
-
-port-forward: ## Creates port forward to GCP container
-	gcloud container clusters get-credentials $(CLUSTER_NAME) --zone southamerica-east1 --project $(PROJECT)
-	kubectl port-forward --namespace forex deployment/treasury-operations 9989:9989
-
 
 postgres-up: ## Startup the Postgres database
 	@ docker-compose -f docker-compose.yaml up -d --force-recreate
